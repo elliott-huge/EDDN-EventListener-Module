@@ -1,9 +1,0 @@
-#TODO: import candidate system list csv for testing of system comparison function DONE
-
-#TODO: evaluate whether a FSDJump is out of date DONE
-
-#TODO: report full details of 'hits'
-
-#TODO: compare 'hits' against BGS API, check if faction controls station (stationList csv now?)
-
-#TODO: additionally check if a war occured since the last station update
