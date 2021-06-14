@@ -1,37 +1,30 @@
+import FSDJumpTools
 import csv
-from miscTools import *
-#from eventTools import *
-import eventTools
+#from miscTools import *
+import miscTools
+import EDDNEventTools
 import re as regex
 import datetime
 
-def hasEvent(jsonData):
-    """Checks if there is ANY entry of type 'event' in a json."""
-    if jsonData['message'].get('event') == None:
-        return False
-    return True
 
-def eventTypeCheck(jsonData, eventType):
-    """Checks if the json's event is of a specified eventType."""
-    if jsonData['message'].get('event') == eventType:
-        return True
-    return False
+
+
 
 def systemPopulationCheck(jsonData, minPopulation):
     """Event: FSDJump. Checks if the system is higher than a specified value."""
-    if jsonData['message'].get('Population') >= minPopulation:
+    if FSDJumpTools.getSystemPopulation(jsonData) >= minPopulation:
         return True
     return False
 
 def checkSystemDistanceSol(jsonData, maxDistance):
     """Event: FSDJump. returns float value of the system's distance to Sol."""
-    coordinates = jsonData['message'].get('StarPos')
-    distance = get3dDistance(coordinates)
+    coordinates = FSDJumpTools.getSystemCoordinates(jsonData)
+    distance = miscTools.get3dDistance(coordinates)
     return (distance < maxDistance)
 
 def systemIsInList(jsonData, systemList):
     """Checks the current system name against a system list."""
-    system = eventTools.getStarSystem(jsonData)
+    system = FSDJumpTools.getStarSystem(jsonData)
     if system in systemList:
         return True
     return False
@@ -50,7 +43,7 @@ def systemListFromCSV(fileName, sysNameColumn):
 
 def compareActiveSystemFactionStates(jsonData, givenStates):
     """Iterates over each faction, returns True or False if any factions are in the desired state(s)"""
-    factionsList = eventTools.getFactions(jsonData)
+    factionsList = FSDJumpTools.getFactions(jsonData)
     for faction in factionsList:
         if compareActiveFactionStates(faction, givenStates):
             return True
@@ -61,7 +54,7 @@ def compareActiveSystemFactionStates(jsonData, givenStates):
 
 def compareActiveFactionStates(faction, givenStates):
     """Checks if a faction is in a given set of states, returns their details"""
-    activeStates = eventTools.getFactionActiveStates(faction)
+    activeStates = FSDJumpTools.getFactionActiveStates(faction)
 
     if activeStates == None:
         return False
@@ -80,7 +73,7 @@ def compareEventAge(jsonData, maxAgeMinutes):
     """If timestamp of message is within 15 minutes of now, return True"""
 
     # Guard clause for events without timestamps (erroneous data)
-    eventTimestampString = eventTools.getTimeStamp(jsonData)
+    eventTimestampString = FSDJumpTools.getTimeStamp(jsonData)
     if eventTimestampString == None:
         return False
     
@@ -110,7 +103,7 @@ class factionStatusNotification:
         self.maxDistToSol = maxDistToSol
         self.systemList = systemList
 
-        # 
+        
         self.validResultFlag = False
         self.resultDataDump = None
         self.resultSystem = None
@@ -157,15 +150,15 @@ class factionStatusNotification:
             #TODO make into a function
             self.validResultFlag = True
             self.resultDataDump = jsonData
-            self.resultSystem = eventTools.getStarSystem(jsonData)
+            self.resultSystem = FSDJumpTools.getStarSystem(jsonData)
             #TODO make getValidFactions(1,2)
-            self.resultFactions = getValidFactions(jsonData, self.activeStateList)
+            self.resultFactions = miscTools.getValidFactions(jsonData, self.activeStateList)
             return
 
         # default (???)
         #TODO make into a function
         self.validResultFlag = True
         self.resultDataDump = jsonData
-        self.resultSystem = eventTools.getStarSystem(jsonData)
+        self.resultSystem = FSDJumpTools.getStarSystem(jsonData)
 
         return
