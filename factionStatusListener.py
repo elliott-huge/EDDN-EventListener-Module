@@ -1,4 +1,4 @@
-import FSDJumpTools
+import FSDJumpEventTools
 import csv
 #from miscTools import *
 import miscTools
@@ -10,21 +10,21 @@ import datetime
 
 
 
-def systemPopulationCheck(jsonData, minPopulation):
+def systemPopulationCheck(message, minPopulation):
     """Event: FSDJump. Checks if the system is higher than a specified value."""
-    if FSDJumpTools.getSystemPopulation(jsonData) >= minPopulation:
+    if FSDJumpEventTools.getSystemPopulation(message) >= minPopulation:
         return True
     return False
 
-def checkSystemDistanceSol(jsonData, maxDistance):
+def checkSystemDistanceSol(message, maxDistance):
     """Event: FSDJump. returns float value of the system's distance to Sol."""
-    coordinates = FSDJumpTools.getSystemCoordinates(jsonData)
+    coordinates = FSDJumpEventTools.getSystemCoordinates(message)
     distance = miscTools.get3dDistance(coordinates)
     return (distance < maxDistance)
 
-def systemIsInList(jsonData, systemList):
+def systemIsInList(message, systemList):
     """Checks the current system name against a system list."""
-    system = FSDJumpTools.getStarSystem(jsonData)
+    system = FSDJumpEventTools.getStarSystem(message)
     if system in systemList:
         return True
     return False
@@ -41,39 +41,57 @@ def systemListFromCSV(fileName, sysNameColumn):
     print("System entries = {0}".format(rowCount))
     return systemList
 
-def compareActiveSystemFactionStates(jsonData, givenStates):
-    """Iterates over each faction, returns True or False if any factions are in the desired state(s)"""
-    factionsList = FSDJumpTools.getFactions(jsonData)
-    for faction in factionsList:
-        if compareActiveFactionStates(faction, givenStates):
-            return True
-    
-    return False
+def compareActiveFactionState(faction, seekState):
+    """Checks if a single faction is in a single given state"""
+    activeStates = FSDJumpEventTools.getFactionActiveStates(faction)
 
-
-
-def compareActiveFactionStates(faction, givenStates):
-    """Checks if a faction is in a given set of states, returns their details"""
-    activeStates = FSDJumpTools.getFactionActiveStates(faction)
-
+    # Has no active states
     if activeStates == None:
         return False
     
-    i = 0
+    # Has a match
     for state in activeStates:
-        if state in givenStates:
+        if state == seekState:
+            return True
+
+    # Has active states, none match the seek state
+    return False
+
+def compareActiveFactionStates(faction, givenStates, strictFlag = False):
+    """Checks if a faction is in all of the given state(s), strictFlag=True to allows exact matches only"""
+    i = 0
+    stateRequirement = givenStates.len()
+    for seekState in givenStates:
+        if compareActiveFactionState(faction, seekState):
             i+=1
-    
-    if i == len(givenStates):
+    if i == stateRequirement or i >= stateRequirement and not strictFlag:
         return True
     
     return False
 
+
+def compareActiveSystemStates(message, givenStates, strictFlag = False):
+    """Checks if any of the system's factions are in all of the desired state(s), strictFlag=True to allows exact matches only"""
+    factionsList = FSDJumpEventTools.getIfFactions(message)
+    if factionsList == None:
+        # System has no factions... is this intended behaviour?
+        return False
+
+    for faction in factionsList:
+        if compareActiveFactionStates(faction, givenStates, strictFlag):
+            return True
+    # Has factions, match not found
+    return False
+
+
+
+
+#TODO: refactor and break into EDDNEventTools / miscTools
 def compareEventAge(jsonData, maxAgeMinutes):
     """If timestamp of message is within 15 minutes of now, return True"""
 
     # Guard clause for events without timestamps (erroneous data)
-    eventTimestampString = FSDJumpTools.getTimeStamp(jsonData)
+    eventTimestampString = FSDJumpEventTools.getTimeStamp(jsonData)
     if eventTimestampString == None:
         return False
     
@@ -92,6 +110,8 @@ def compareEventAge(jsonData, maxAgeMinutes):
 
     return False
 
+
+#TODO: delet
 class factionStatusNotification:
     
     def __init__(self, notificationName, activeStateList = None, population = 1, maxDistToSol = 250, systemList = None):
@@ -150,7 +170,7 @@ class factionStatusNotification:
             #TODO make into a function
             self.validResultFlag = True
             self.resultDataDump = jsonData
-            self.resultSystem = FSDJumpTools.getStarSystem(jsonData)
+            self.resultSystem = FSDJumpEventTools.getStarSystem(jsonData)
             #TODO make getValidFactions(1,2)
             self.resultFactions = miscTools.getValidFactions(jsonData, self.activeStateList)
             return
@@ -159,6 +179,6 @@ class factionStatusNotification:
         #TODO make into a function
         self.validResultFlag = True
         self.resultDataDump = jsonData
-        self.resultSystem = FSDJumpTools.getStarSystem(jsonData)
+        self.resultSystem = FSDJumpEventTools.getStarSystem(jsonData)
 
         return
