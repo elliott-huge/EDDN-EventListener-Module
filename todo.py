@@ -2,6 +2,6 @@
 
 #TODO: additionally check if a war occured since the last station update NADA
 
-#TODO: refactor almost al lthe code in fSL.py
+#TODO: refactor almost all the code in fSL.py
 
 #TODO: make eventTools.py more comprehensive xo
