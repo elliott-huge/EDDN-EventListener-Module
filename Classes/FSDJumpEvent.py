@@ -11,10 +11,19 @@ from os import stat
 
 # ----The following functions should all return a complete value for a well-formed FSDJump event's message, they will raise an exception otherwise----
 
+def createFSDJumpEvent(message):
+    if message == None: 
+        return None
+
+    if message.get('event') == 'FSDJump':
+        return FSDJumpEvent(message)
+    return None
+
+
 class FSDJumpEvent(Event):
     """FSDJumpEvent class, an OOP approach, extends EDDNEvent"""
     def __init__(self, message):
-        super().__init__
+        super().__init__(message)
         # Jump data
         self.fuelUsed = message.get('FuelUsed')
         self.fuelLevel = message.get('FuelLevel')
@@ -37,38 +46,67 @@ class FSDJumpEvent(Event):
         self.systemSecondEconomy = message.get('SystemSecondEconomy')
         self.systemGovernment = message.get('SystemGovernment')
 
-
-
         # Faction stuff, probably all needs revalidating due to data nesting
-        self.controllingFaction = message.get('SystemFaction')
-        self.factions = message.get('Factions')
-
-
-
+        self.controllingFactionName = message.get('SystemFaction') # MAYBE REDUNDANT
+        self.factions = getFactions(message)
 
         # Message Data
-        self.messageData = message
+        #self.messageData = message
 
-# ----The following functions will return None if no entry is found, this is the inteded behaviour----
+def getFactions(message):
+    systemFactions = message.get('Factions')
+    if systemFactions == None:
+        yield None
+    else:
+        controllingFactionName = message['SystemFaction'].get('Name')
+
+        warInfo = None
+        if 'Conflicts' in message:
+            warInfo = message['Conflicts']
+
+        for faction in systemFactions:
+            yield Faction(faction, controllingFactionName, warInfo)
 
 class Faction:
     # faction class which encapsulates all faction-pertinent data
-    #TODO: this needs to be a generator
-    def __init__(self, message, index):
-        self.name = None
-        self.controllingFlag = True if message['SystemFaction'].get('Name') == self.name else False
+    #TODO: make iteraable???
+    def __init__(self, factionInfo, controllingFactionName, warInfo):
+        # basic bitch shit
+        self.name = factionInfo.get('Name')
+        self.state = factionInfo.get('FactionState')
+        self.governmentType = factionInfo.get('Government')
+        self.influenceDecimal = factionInfo.get('Influence')
+        self.happiness = factionInfo.get('Happiness')
+
+        # states
+        self.pendingStates = self._getStates(factionInfo.get('PendingStates', None))
+        self.recoveringStates = self._getStates(factionInfo.get('RecoveringStates', None))
+        self.activeStates = self._getStates(factionInfo.get('ActiveStates', None)) # YOU REALLY WANT THESE !!!!!
+
+        self.controllingFlag = True if controllingFactionName == self.name else False
+        self.warOpponent = None
 
 
+    
+    def _getStates(self, stateDict):
+        if stateDict == None:
+            return
+        for state in stateDict:
+            # returns a tuple of the state name, and its trend value (if applicable, otherwise trend is None)
+            if 'Trend' in state:
+                yield (state['State'], state['Trend'])
+            elif 'State' in state:
+                yield (state['State'], None)
 
-def getFactionActiveStates(faction):
-    """Returns the state(s) of a Faction, may return None if none are found"""
-    states = []
-    statesRaw = faction.get('ActiveStates')
-    if statesRaw == None:
-        return None
 
-    states = []
-    for state in statesRaw:
-        states.append(state['State'])
-
-    return states
+    def listStateNames(self, stateType: str):
+        """Returns a list of active states for a single faction depending on the state type desired: 'active', 'pending', and 'recovering'"""
+        if stateType == 'active':
+            for state in self.activeStates:
+                yield state[0]
+        elif stateType == 'pending':
+            for state in self.pendingStates:
+                yield state[0]
+        elif stateType == 'recovering':
+            for state in self.recoveringStates:
+                yield state[0]

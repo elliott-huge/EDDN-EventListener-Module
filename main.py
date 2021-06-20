@@ -3,16 +3,21 @@ import zmq
 import simplejson
 import sys
 import time
-import requests
-from factionStatusListener import *
+from Classes.factionStatusNotification import factionStatusNotification
+from Classes.FSDJumpEvent import createFSDJumpEvent
+from Classes.EDDNEvent import createMessageFromJson
+from HelperFunctions.miscTools import systemListFromCSV
 
 __relayEDDN             = 'tcp://eddn.edcd.io:9500'
 __timeoutEDDN           = 600000
-#factionStatusNotification("BoomSystemFactions Alert", ["Boom"], 1000000, 100, systemListFromCSV('candidateSystems pop 500k.csv', 0))
-a = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], 1000000, 100)
-#b = requests.get('https://elitebgs.app/api/ebgs/v5/stations?system=gateway&type=orbis&count=0', allow_redirects=True)
-#print(b)
-#wait = input()
+
+#boomAlert = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], False, 1000000, 100)
+candidateList = systemListFromCSV("Data\candidateSystems pop 500k.csv", 0)
+iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 50000000, 220, candidateList)
+
+
+hitSystems = []
+
 def main():
     context     = zmq.Context()
     subscriber  = context.socket(zmq.SUB)
@@ -34,13 +39,21 @@ def main():
                 __message   = zlib.decompress(__message)
                 __json      = simplejson.loads(__message)
 
-                a.assessFSDJumpEvent(__json)
+                message = createMessageFromJson(__json)
+                fsdEvent = createFSDJumpEvent(message)
 
-                if a.result != None:
-                    print("System '{0}' has been pinged by {1}:".format(a.result[1]['message'].get('StarSystem'), a.notificationName))
-                    for faction in a.result[0]:
-                        print("Faction: '{0}', of Influence: '{1}', is in States: '{2}'".format(faction[1], faction[2], faction[3]))
-                    i+=1
+                if fsdEvent != None:
+                    hit = iFAlert.assessFSDJumpEvent(fsdEvent)
+                    if hit != None and hit not in hitSystems:
+                        print(f"System: {hit.systemName}, System Population: {hit.systemPopulation}, Controlling Faction: {hit.controllingFactionName}")
+                        hitSystems.append(hit)
+                        
+
+                # if a.result != None:
+                #     print("System '{0}' has been pinged by {1}:".format(a.result[1]['message'].get('StarSystem'), a.notificationName))
+                #     for faction in a.result[0]:
+                #         print("Faction: '{0}', of Influence: '{1}', is in States: '{2}'".format(faction[1], faction[2], faction[3]))
+                #     i+=1
 
 
             wait = input()
