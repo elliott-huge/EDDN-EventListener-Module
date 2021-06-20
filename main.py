@@ -13,10 +13,12 @@ __timeoutEDDN           = 600000
 
 #boomAlert = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], False, 1000000, 100)
 candidateList = systemListFromCSV("Data\candidateSystems pop 500k.csv", 0)
-iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 50000000, 220, candidateList)
+iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220, 0.3, candidateList)
+#iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220)
 
 
 hitSystems = []
+hitSystemNames = []
 
 def main():
     context     = zmq.Context()
@@ -44,9 +46,10 @@ def main():
 
                 if fsdEvent != None:
                     hit = iFAlert.assessFSDJumpEvent(fsdEvent)
-                    if hit != None and hit not in hitSystems:
+                    if hit != None and hit.systemName not in hitSystemNames:
                         print(f"System: {hit.systemName}, System Population: {hit.systemPopulation}, Controlling Faction: {hit.controllingFactionName}")
                         hitSystems.append(hit)
+                        hitSystemNames.append(hit.systemName)
                         
 
                 # if a.result != None:

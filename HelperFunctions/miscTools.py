@@ -46,8 +46,8 @@ def compareTwoLists(listA: list, listB: list, strict: bool):
         if a in listB:
             matches += 1
 
-    if strict == True and matches != len(listB):
-        return False
-    if strict == False and matches > len(listB):
-        return False
-    return True
+    if strict == True and matches == len(listB):
+        return True
+    if strict == False and matches >= len(listB):
+        return True
+    return False
