@@ -13,9 +13,11 @@ __timeoutEDDN           = 600000
 
 #boomAlert = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], False, 1000000, 100)
 candidateList = systemListFromCSV("Data\candidateSystems pop 500k.csv", 0)
-iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220, 0.3, candidateList)
+iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 2000000, 220, 0.10, candidateList)
 #iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220)
-
+f = open("foundSystems.txt", "a")
+f.write(f"{iFAlert.notificationName}:\n")
+f.close()
 
 hitSystems = []
 hitSystemNames = []
@@ -50,6 +52,14 @@ def main():
                         print(f"System: {hit.systemName}, System Population: {hit.systemPopulation}, Controlling Faction: {hit.controllingFactionName}")
                         hitSystems.append(hit)
                         hitSystemNames.append(hit.systemName)
+                        f = open("foundSystems.txt", "a")
+                        f.write(f"{hit.systemName}, Population: {hit.systemPopulation}\n")
+                        for faction in hit.factions:
+                            states = faction.listStateNames("active")
+                            isControlling = ", is the Controlling Faction!" if faction.controllingFlag else ""
+                            f.write(f"      {faction.name}, States: {states}, Influence: {faction.influenceDecimal}{isControlling}\n")
+                        f.close()
+
                         
 
                 # if a.result != None:
@@ -59,6 +69,7 @@ def main():
                 #     i+=1
 
 
+            
             wait = input()
         except zmq.ZMQError as e:
             print ('ZMQSocketException: ' + str(e))

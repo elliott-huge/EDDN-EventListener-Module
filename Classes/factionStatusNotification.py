@@ -39,10 +39,11 @@ class factionStatusNotification:
         #optional guard against faction states
         #TODO: make into a function call that is reusable; a method of this class
         if self.activeStateList != None:
-            factionCount = 0
-            for faction in event.factions:
-                factionCount+=1
-                if compareTwoLists(faction.listStateNames('active'), self.activeStateList, self.strictMatch) and faction.influenceDecimal > self.minInfluence:
-                    return event
 
+            for faction in event.factions:
+                if not compareTwoLists(faction.listStateNames('active'), self.activeStateList, self.strictMatch):
+                    continue
+                if faction.influenceDecimal > self.minInfluence or faction.controllingFlag:
+                    return event
+        
         return None

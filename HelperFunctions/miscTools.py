@@ -42,6 +42,9 @@ def systemListFromCSV(fileName, sysNameColumn):
 
 def compareTwoLists(listA: list, listB: list, strict: bool):
     matches = 0
+    if listA == None or listB == None:
+        return False
+
     for a in listA:
         if a in listB:
             matches += 1

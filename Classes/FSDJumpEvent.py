@@ -56,16 +56,17 @@ class FSDJumpEvent(Event):
 def getFactions(message):
     systemFactions = message.get('Factions')
     if systemFactions == None:
-        yield None
+        return None
     else:
         controllingFactionName = message['SystemFaction'].get('Name')
 
         warInfo = None
         if 'Conflicts' in message:
             warInfo = message['Conflicts']
-
+        factionList = []
         for faction in systemFactions:
-            yield Faction(faction, controllingFactionName, warInfo)
+            factionList.append(Faction(faction, controllingFactionName, warInfo))
+        return factionList
 
 class Faction:
     # faction class which encapsulates all faction-pertinent data
@@ -90,23 +91,33 @@ class Faction:
     
     def _getStates(self, stateDict):
         if stateDict == None:
-            return
+            return None
+        stateList = []
         for state in stateDict:
             # returns a tuple of the state name, and its trend value (if applicable, otherwise trend is None)
             if 'Trend' in state:
-                yield (state['State'], state['Trend'])
+                stateList.append((state['State'], state['Trend']))
             elif 'State' in state:
-                yield (state['State'], None)
+                stateList.append((state['State'], None))
+        return stateList
 
 
     def listStateNames(self, stateType: str):
         """Returns a list of active states for a single faction depending on the state type desired: 'active', 'pending', and 'recovering'"""
+        stateList = []
         if stateType == 'active':
+            if self.activeStates == None:
+                return None
             for state in self.activeStates:
-                yield state[0]
+                stateList.append(state[0])
         elif stateType == 'pending':
+            if self.pendingStates == None:
+                return None
             for state in self.pendingStates:
-                yield state[0]
+                stateList.append(state[0])
         elif stateType == 'recovering':
+            if self.recoveringStates == None:
+                return None
             for state in self.recoveringStates:
-                yield state[0]
+                stateList.append(state[0])
+        return stateList
