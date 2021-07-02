@@ -13,10 +13,11 @@ __timeoutEDDN           = 600000
 
 #boomAlert = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], False, 1000000, 100)
 candidateList = systemListFromCSV("Data\candidateSystems pop 500k.csv", 0)
-iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 2000000, 220, 0.10, candidateList)
+Alert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 30000000, 250, 0.25, candidateList)
 #iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220)
-f = open("foundSystems.txt", "a")
-f.write(f"{iFAlert.notificationName}:\n")
+fName = "goldRushSystems.txt"
+f = open(fName, "a")
+f.write(f"{Alert.notificationName}:\n")
 f.close()
 
 hitSystems = []
@@ -47,12 +48,12 @@ def main():
                 fsdEvent = createFSDJumpEvent(message)
 
                 if fsdEvent != None:
-                    hit = iFAlert.assessFSDJumpEvent(fsdEvent)
+                    hit = Alert.assessFSDJumpEvent(fsdEvent)
                     if hit != None and hit.systemName not in hitSystemNames:
                         print(f"System: {hit.systemName}, System Population: {hit.systemPopulation}, Controlling Faction: {hit.controllingFactionName}")
                         hitSystems.append(hit)
                         hitSystemNames.append(hit.systemName)
-                        f = open("foundSystems.txt", "a")
+                        f = open(fName, "a")
                         f.write(f"{hit.systemName}, Population: {hit.systemPopulation}\n")
                         for faction in hit.factions:
                             states = faction.listStateNames("active")

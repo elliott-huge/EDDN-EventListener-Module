@@ -58,8 +58,14 @@ def getFactions(message):
     if systemFactions == None:
         return None
     else:
-        controllingFactionName = message['SystemFaction'].get('Name')
-
+        try:
+            controllingFactionName = message['SystemFaction'].get('Name')
+        except AttributeError as a:
+            print(f"Unusually formed controlling faction name encountered: {a}\n{message}")
+        
+        if 'controllingFactionName' not in locals():
+            controllingFactionName = None
+        
         warInfo = None
         if 'Conflicts' in message:
             warInfo = message['Conflicts']
