@@ -1,0 +1,2 @@
+simplejson==3.17.5
+pyzmq==22.3.0
