@@ -12,7 +12,7 @@ __relayEDDN             = 'tcp://eddn.edcd.io:9500'
 __timeoutEDDN           = 600000
 
 #boomAlert = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], False, 1000000, 100)
-candidateList = systemListFromCSV("Data\candidateSystems pop 500k.csv", 0)
+candidateList = systemListFromCSV("Data\\candidateSystems pop 500k.csv", 0)
 Alert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 30000000, 250, 0.25, candidateList)
 #iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220)
 fName = "goldRushSystems.txt"
@@ -70,8 +70,7 @@ def main():
                 #     i+=1
 
 
-            
-            wait = input()
+            input()
         except zmq.ZMQError as e:
             print ('ZMQSocketException: ' + str(e))
             sys.stdout.flush()

@@ -1,5 +1,5 @@
 from Classes.FSDJumpEvent import FSDJumpEvent
-from HelperFunctions.miscTools import *
+from HelperFunctions.miscTools import get3dDistance, compareTwoLists
 
 #TODO: delet
 class factionStatusNotification:
@@ -33,8 +33,6 @@ class factionStatusNotification:
         #optional guard against unlisted systems
         if self.systemList != None and event.systemName not in self.systemList:
             return None
-        
-
 
         #optional guard against faction states
         #TODO: make into a function call that is reusable; a method of this class

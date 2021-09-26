@@ -21,7 +21,7 @@ def get3dDistance(locationA, locationB = [0.0, 0.0, 0.0]):
     return distance
 
 def formatTimestamp(rawTimestamp):
-    regexPattern = "(\d{4}-\d{2}-\d{2}).(\d{2}:\d{2}:\d{2})."
+    regexPattern = r"(\d{4}-\d{2}-\d{2}).(\d{2}:\d{2}:\d{2})."
     
     cleanTimestampArr = regex.split(regexPattern, rawTimestamp)
     dateTimeString = cleanTimestampArr[1] + " " + cleanTimestampArr[2] + ".000000"
