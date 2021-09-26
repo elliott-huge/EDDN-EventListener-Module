@@ -63,6 +63,10 @@ def getFactions(message):
         except AttributeError as a:
             print(f"Unusually formed controlling faction name encountered: {a}\n{message}")
         
+        # The above catch wasn't sufficient for all cases, the below statement resolves remaining errors
+        # It can be hard to test this, as systems containing such 'malformed' factions are rarely jumped into
+        # I believe it's primarily prison systems
+        # TODO: maybe make this if part of the exception, or the try statement
         if 'controllingFactionName' not in locals():
             controllingFactionName = None
         
@@ -82,13 +86,13 @@ class Faction:
         self.name = factionInfo.get('Name')
         self.state = factionInfo.get('FactionState')
         self.governmentType = factionInfo.get('Government')
-        self.influenceDecimal = factionInfo.get('Influence')
+        self.influenceDecimal = round(factionInfo.get('Influence'), 2)
         self.happiness = factionInfo.get('Happiness')
 
         # states
         self.pendingStates = self._getStates(factionInfo.get('PendingStates', None))
         self.recoveringStates = self._getStates(factionInfo.get('RecoveringStates', None))
-        self.activeStates = self._getStates(factionInfo.get('ActiveStates', None)) # YOU REALLY WANT THESE !!!!!
+        self.activeStates = self._getStates(factionInfo.get('ActiveStates', None)) # YOU REALLY WANT THESE
 
         self.controllingFlag = True if controllingFactionName == self.name else False
         self.warOpponent = None
@@ -106,7 +110,6 @@ class Faction:
             elif 'State' in state:
                 stateList.append((state['State'], None))
         return stateList
-
 
     def listStateNames(self, stateType: str):
         """Returns a list of active states for a single faction depending on the state type desired: 'active', 'pending', and 'recovering'"""

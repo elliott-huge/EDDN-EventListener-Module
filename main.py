@@ -13,7 +13,7 @@ __timeoutEDDN           = 600000
 
 #boomAlert = factionStatusNotification("BoomSystemFactions Alert", ["Boom"], False, 1000000, 100)
 candidateList = systemListFromCSV("Data\\candidateSystems pop 500k.csv", 0)
-Alert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 30000000, 250, 0.25, candidateList)
+Alert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 8000000, 250, 0.25, candidateList)
 #iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220)
 fName = "goldRushSystems.txt"
 f = open(fName, "a")
