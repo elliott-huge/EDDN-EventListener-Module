@@ -4,3 +4,5 @@ useful.txt
 todo.py
 EDDNListenerWorkspace.code-workspace
 foundSystems.txt
+HelperFunctions/__pycache__/*
+Classes/__pycache__/*
