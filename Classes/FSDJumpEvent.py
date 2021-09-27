@@ -1,4 +1,4 @@
-from EDDNEvent import Event
+from Classes.EDDNEvent import Event
 #from os import stat
 #TODO this entire file and any other appropriate functions to be added
 
