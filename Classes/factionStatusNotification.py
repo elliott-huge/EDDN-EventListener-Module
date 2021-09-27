@@ -1,5 +1,5 @@
 from Classes.FSDJumpEvent import FSDJumpEvent
-from HelperFunctions.utils import get3dDistance, compareLists
+from HelperFunctions.utils import get3dDistance, compareLists, datetime
 
 #TODO: delet
 class factionStatusNotification:
@@ -14,6 +14,15 @@ class factionStatusNotification:
         self.maxDistToSol = maxDistToSol
         self.minInfluence = minInfluence
         self.systemList = systemList
+
+        # output file setup
+        #TODO: set up file tracking per faction status notification
+        #TODO: look into async
+        self.fileName = f"{notificationName}_{datetime.datetime().utcnow}.txt"
+        f = open(self.fileNameme, "a")
+        f.write(f"{self.notificationName}, States: {self.activeStateList}, State Match Strictness: {self.strictMatch}, Min' Pop': {self.minPopulation}, Max Dist' from Sol{self.maxDistToSol}, Min Influence%: {self.minInfluence}:\n")
+        f.close()
+
 
     def assessFSDJumpEvent(self, event: FSDJumpEvent):
         """Checks and returns if the inputted event if it meets the notification's criteria."""

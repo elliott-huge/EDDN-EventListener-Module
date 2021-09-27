@@ -15,10 +15,7 @@ __timeoutEDDN           = 600000
 candidateList = systemListFromCSV("Data\\candidateSystems pop 500k.csv", 0)
 Alert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 8000000, 250, 0.25, candidateList)
 #iFAlert = factionStatusNotification("Gold / Silver Alert", ["InfrastructureFailure"], False, 5000000, 220)
-fName = "goldRushSystems.txt"
-f = open(fName, "a")
-f.write(f"{Alert.notificationName}:\n")
-f.close()
+
 
 hitSystems = []
 hitSystemNames = []
@@ -53,7 +50,7 @@ def main():
                         print(f"System: {hit.systemName}, System Population: {hit.systemPopulation}, Controlling Faction: {hit.controllingFactionName}")
                         hitSystems.append(hit)
                         hitSystemNames.append(hit.systemName)
-                        f = open(fName, "a")
+                        f = open(Alert.fileName, "a")
                         f.write(f"{hit.systemName}, Population: {hit.systemPopulation}\n")
                         for faction in hit.factions:
                             states = faction.listStateNames("active")
