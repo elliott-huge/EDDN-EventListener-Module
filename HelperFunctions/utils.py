@@ -1,4 +1,4 @@
-"""Contains tools which are often useful, though not necessary, for EDDN event listening"""
+"""Contains functions common to several libraries"""
 
 from math import sqrt
 import datetime
@@ -7,7 +7,7 @@ import csv
 
 
 def get3dDistance(locationA, locationB = [0.0, 0.0, 0.0]):
-    """Evaluates the distance between a pair of three-dimensional coordinates (floats), the 2nd Parameter defaults to 0,0,0 (Sol)"""
+    """Evaluates the distance between a pair of 3d coordinates (floats), the 2nd Parameter defaults to 0,0,0 (Sol)"""
     squareDist = 0
     
     for dimension in range (3):
@@ -40,7 +40,8 @@ def systemListFromCSV(fileName, sysNameColumn):
     print("System entries = {0}".format(rowCount))
     return systemList
 
-def compareTwoLists(listA: list, listB: list, strict: bool):
+def compareLists(listA: list, listB: list, strict: bool):
+    """Takes two lists and a strictness parameter, checks for any matches if not strict and checks for exact matches if strict."""
     matches = 0
     if listA == None or listB == None:
         return False

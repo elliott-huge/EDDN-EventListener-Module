@@ -6,7 +6,7 @@ import time
 from Classes.factionStatusNotification import factionStatusNotification
 from Classes.FSDJumpEvent import createFSDJumpEvent
 from Classes.EDDNEvent import createMessageFromJson
-from HelperFunctions.miscTools import systemListFromCSV
+from HelperFunctions.utils import systemListFromCSV
 
 __relayEDDN             = 'tcp://eddn.edcd.io:9500'
 __timeoutEDDN           = 600000

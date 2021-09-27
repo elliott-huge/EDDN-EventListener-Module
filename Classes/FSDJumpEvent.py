@@ -1,15 +1,6 @@
 from EDDNEvent import Event
-from os import stat
+#from os import stat
 #TODO this entire file and any other appropriate functions to be added
-
-# def getIfFSDJumpEventObject(jsonData):
-#     """Returns the a new FSDJumpEvent it is an FSDJump Event, otherwise returns None"""
-#     message = getMessageData(jsonData)
-#     if eventTypeCheck(message, "FSDJump"):
-#         return FSDJumpEvent(message)
-#     return None
-
-# ----The following functions should all return a complete value for a well-formed FSDJump event's message, they will raise an exception otherwise----
 
 def createFSDJumpEvent(message):
     if message == None: 
@@ -80,7 +71,6 @@ def getFactions(message):
 
 class Faction:
     # faction class which encapsulates all faction-pertinent data
-    #TODO: make iteraable???
     def __init__(self, factionInfo, controllingFactionName, warInfo):
         # basic bitch shit
         self.name = factionInfo.get('Name')
@@ -95,6 +85,8 @@ class Faction:
         self.activeStates = self._getStates(factionInfo.get('ActiveStates', None)) # YOU REALLY WANT THESE
 
         self.controllingFlag = True if controllingFactionName == self.name else False
+
+        # war info would go here
         self.warOpponent = None
 
 

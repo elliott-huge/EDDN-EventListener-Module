@@ -1,5 +1,5 @@
 
-from HelperFunctions.miscTools import formatTimestamp, datetime
+from HelperFunctions.utils import formatTimestamp, datetime
 
 
 def createMessageFromJson(jsonData):

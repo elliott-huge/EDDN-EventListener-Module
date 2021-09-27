@@ -1,5 +1,5 @@
 from Classes.FSDJumpEvent import FSDJumpEvent
-from HelperFunctions.miscTools import get3dDistance, compareTwoLists
+from HelperFunctions.utils import get3dDistance, compareLists
 
 #TODO: delet
 class factionStatusNotification:
@@ -39,7 +39,7 @@ class factionStatusNotification:
         if self.activeStateList != None:
 
             for faction in event.factions:
-                if not compareTwoLists(faction.listStateNames('active'), self.activeStateList, self.strictMatch):
+                if not compareLists(faction.listStateNames('active'), self.activeStateList, self.strictMatch):
                     continue
                 if faction.influenceDecimal > self.minInfluence or faction.controllingFlag:
                     return event
