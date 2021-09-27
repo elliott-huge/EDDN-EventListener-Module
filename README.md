@@ -5,4 +5,4 @@ A Notification object compares every reported FSDJump data against its own set o
 
 This module currently provides such reports on Faction's Active Statuses, filtered by a number of other variables: system population, faction influence%, distance from Sol, comparison against a premade list of systems, and so on.
 
-This program would be currently useful for inferring stations that may have high (or low) commidity prices by their active faction statuses and overall influence%.
+This program would be currently useful for inferring stations that may have high (or low) commodity prices by their active faction statuses and overall influence%.
